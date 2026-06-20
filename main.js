@@ -4,7 +4,9 @@ const path = require("path");
 const AdmZip = require("adm-zip");
 const SBDL = require("@turbowarp/sbdl");
 
-const gamesDir = path.join(__dirname, "games");
+const gamesDir = app.isPackaged
+    ? path.join(path.dirname(process.execPath), "games")
+    : path.join(__dirname, "games");
 
 function ensureGamesDir() {
     fs.mkdirSync(gamesDir, { recursive: true });
