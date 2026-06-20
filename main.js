@@ -75,7 +75,7 @@ function createLauncher() {
         webPreferences: {
             preload: path.join(__dirname, "preload.js")
         },
-        icon: path.join(__dirname, "build", "icon.ico"),
+        icon: path.join(__dirname, "build", "icon.png"),
     });
 
     win.setMenuBarVisibility(false);
@@ -165,7 +165,7 @@ ipcMain.handle("launch-game", (event, gameName) => {
         height: 720,
         title: gameMeta.title,
         autoHideMenuBar: true,
-        icon: path.join(__dirname, "build", "icon.ico"),
+        icon: path.join(__dirname, "build", "icon.png"),
     });
 
     gameWindow.setMenuBarVisibility(false);

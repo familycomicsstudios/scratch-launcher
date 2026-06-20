@@ -21,7 +21,7 @@
     "electron-builder": "^26.15.3"
   },
   "build": {
-    "icon": "build/icon.ico",
+    "icon": "build/icon.png",
     "appId": "com.themadpunter.scratch-launcher",
     "productName": "Scratch Launcher",
     "copyright": "Copyright © 2026 Themadpunter",
