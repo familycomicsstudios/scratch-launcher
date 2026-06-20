@@ -1,6 +1,7 @@
 {
   "name": "scratch-launcher",
   "author": "Themadpunter",
+  "email": "themadpunter@proton.me",
   "description": "A simple launcher for Scratch projects",
   "version": "1.0.0",
   "main": "main.js",
@@ -48,8 +49,9 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": false,
-      "createStartMenuShortcut": false
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "runAfterFinish": true
     }
   }
 }
