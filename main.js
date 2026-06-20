@@ -31,7 +31,8 @@ function createLauncher() {
         autoHideMenuBar: true,
         webPreferences: {
             preload: path.join(__dirname, "preload.js")
-        }
+        },
+        icon: path.join(__dirname, "build", "icon.ico"),
     });
 
     win.setMenuBarVisibility(false);
@@ -81,10 +82,11 @@ ipcMain.handle("launch-game", (event, gameName) => {
     const gameMeta = writeGameMetadata(gameName);
 
     const gameWindow = new BrowserWindow({
-        width: 1280,
+        width: 960,
         height: 720,
         title: gameMeta.title,
-        autoHideMenuBar: true
+        autoHideMenuBar: true,
+        icon: path.join(__dirname, "build", "icon.ico"),
     });
 
     gameWindow.setMenuBarVisibility(false);
