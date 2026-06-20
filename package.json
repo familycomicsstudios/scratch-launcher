@@ -37,7 +37,16 @@
     "icon": "build/icon.png",
     "appId": "com.themadpunter.scratch-launcher",
     "productName": "Scratch Launcher",
-    "copyright": "Copyright © 2026 Themadpunter",
+    "copyright": "Copyright © 2026 Themadpunter",,
+    "files": [
+      "*",
+      "runtime/*",
+      "package.json",
+      "build/icon.png"
+    ],
+    "extraResources": [
+      "games/*"
+    ],
     "mac": {
       "category": "public.app-category.utilities"
     },
