@@ -4,9 +4,16 @@ const path = require("path");
 const AdmZip = require("adm-zip");
 const SBDL = require("@turbowarp/sbdl");
 
+const resourcesDir = app.isPackaged
+    ? process.resourcesPath
+    : __dirname;
+
 const gamesDir = app.isPackaged
     ? path.join(path.dirname(process.execPath), "games")
     : path.join(__dirname, "games");
+
+const runtimeDir = path.join(resourcesDir, "runtime");
+const tempDir = path.join(resourcesDir, "temp");
 
 function ensureGamesDir() {
     fs.mkdirSync(gamesDir, { recursive: true });
@@ -62,7 +69,7 @@ function writeGameMetadata(gameName) {
     };
 
     fs.writeFileSync(
-        path.join(__dirname, "runtime", "game-meta.json"),
+        path.join(runtimeDir, "game-meta.json"),
         JSON.stringify(meta, null, 2)
     );
 
@@ -133,8 +140,7 @@ ipcMain.handle("download-project", async (event, input) => {
 
 ipcMain.handle("launch-game", (event, gameName) => {
 
-    const tempDir = path.join(__dirname, "temp");
-    const assetsDir = path.join(__dirname, "runtime", "assets");
+    const assetsDir = path.join(runtimeDir, "assets");
 
     fs.rmSync(tempDir, {
         recursive: true,
@@ -167,12 +173,12 @@ ipcMain.handle("launch-game", (event, gameName) => {
         height: 720,
         title: gameMeta.title,
         autoHideMenuBar: true,
-        icon: path.join(__dirname, "build", "icon.png"),
+        icon: path.join(resourcesDir, "build", "icon.png"),
     });
 
     gameWindow.setMenuBarVisibility(false);
 
     gameWindow.loadFile(
-        path.join(__dirname, "runtime", "index.html")
+        path.join(runtimeDir, "index.html")
     );
 });

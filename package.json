@@ -40,12 +40,14 @@
     "copyright": "Copyright © 2026 Themadpunter",
     "files": [
       "*",
-      "runtime/*",
       "package.json",
       "build/icon.png"
     ],
     "extraFiles": [
       "games/*"
+    ],
+    "extraResources": [
+      "runtime/*"
     ],
     "mac": {
       "category": "public.app-category.utilities"
