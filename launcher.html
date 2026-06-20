@@ -22,6 +22,42 @@ body {
     background: #eee;
 }
 
+.download {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.download input {
+    width: min(100%, 520px);
+    padding: 8px;
+    margin-right: 8px;
+    box-sizing: border-box;
+}
+
+.download button {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.download button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+#download-status {
+    margin: 10px 0 0;
+    min-height: 1.2em;
+}
+
+#download-status.error {
+    color: #b00020;
+}
+
+#download-status.success {
+    color: #0a6b0a;
+}
+
 </style>
 
 </head>
@@ -29,6 +65,16 @@ body {
 <body>
 
 <h1>Scratch Launcher</h1>
+
+<div class="download">
+    <input
+        id="project-url"
+        type="text"
+        placeholder="Scratch project URL or ID"
+    >
+    <button id="download-btn" type="button">Download</button>
+    <p id="download-status"></p>
+</div>
 
 <div id="games"></div>
 
