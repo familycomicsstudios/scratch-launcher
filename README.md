@@ -14,4 +14,4 @@ packaged file and the launcher should start.
 ## Manually Adding New Games
 
 If you want to manually add new games to the launcher, find the location of the app's executable, where there should be a folder called
-"games". Drop a .sb3 file in this folder and it should be automatically detected by the
+"games". Drop a .sb3 file in this folder and it should be automatically detected by the app.
