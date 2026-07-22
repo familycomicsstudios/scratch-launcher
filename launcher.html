@@ -12,14 +12,30 @@ body {
 }
 
 .game {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 10px;
     margin: 5px;
     border: 1px solid #aaa;
-    cursor: pointer;
 }
 
 .game:hover {
     background: #eee;
+}
+
+.game-name {
+    font-weight: 600;
+}
+
+.game-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.game-actions button {
+    padding: 6px 10px;
+    cursor: pointer;
 }
 
 .download {
@@ -58,6 +74,94 @@ body {
     color: #0a6b0a;
 }
 
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.modal[hidden] {
+    display: none;
+}
+
+.modal-card {
+    background: #fff;
+    width: min(640px, 100%);
+    border-radius: 8px;
+    padding: 16px;
+    max-height: 85vh;
+    overflow: auto;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 16px;
+}
+
+.settings-grid label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+.settings-grid input[type="number"] {
+    width: 130px;
+}
+
+.settings-grid input[type="text"],
+.settings-grid select {
+    width: 180px;
+    padding: 4px;
+    box-sizing: border-box;
+}
+
+.settings-grid input[type="color"] {
+    width: 50px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.modal-actions {
+    margin-top: 14px;
+    display: flex;
+    gap: 8px;
+}
+
+#settings-status,
+#global-settings-status {
+    min-height: 1.2em;
+    margin-top: 10px;
+}
+
+#settings-status.error,
+#global-settings-status.error {
+    color: #b00020;
+}
+
+#settings-status.success,
+#global-settings-status.success {
+    color: #0a6b0a;
+}
+
+@media (max-width: 700px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 </style>
 
 </head>
@@ -73,10 +177,169 @@ body {
         placeholder="Scratch project URL or ID"
     >
     <button id="download-btn" type="button">Download</button>
+    <button id="global-settings-btn" type="button">Global Settings</button>
     <p id="download-status"></p>
 </div>
 
 <div id="games"></div>
+
+<div id="settings-modal" class="modal" hidden>
+    <div class="modal-card">
+        <h2 id="settings-title">Settings</h2>
+
+        <form id="settings-form">
+            <div class="settings-grid">
+                <label>
+                    Turbo Mode
+                    <input type="checkbox" name="turboMode">
+                </label>
+
+                <label>
+                    Interpolation
+                    <input type="checkbox" name="interpolation">
+                </label>
+
+                <label>
+                    Framerate
+                    <input type="number" name="framerate" min="1" step="1">
+                </label>
+
+                <label>
+                    High Quality Pen
+                    <input type="checkbox" name="highQualityRender">
+                </label>
+
+                <label>
+                    Enable Fencing?
+                    <input type="checkbox" name="fencing">
+                </label>
+
+                <label>
+                    Misc Limits
+                    <input type="checkbox" name="miscLimits">
+                </label>
+
+                <label>
+                    Max Clones
+                    <input type="number" name="maxClones" min="1" step="1">
+                </label>
+
+                <label>
+                    Compiler Enabled
+                    <input type="checkbox" name="compilerEnabled">
+                </label>
+
+                <label>
+                    Warp Timer
+                    <input type="checkbox" name="warpTimer">
+                </label>
+
+                <label>
+                    Max Texture Dimension
+                    <input type="number" name="maxTextureDimension" min="1" step="1">
+                </label>
+
+                <label>
+                    Stage Width
+                    <input type="number" name="stageWidth" min="1" step="1">
+                </label>
+
+                <label>
+                    Stage Height
+                    <input type="number" name="stageHeight" min="1" step="1">
+                </label>
+
+                <label>
+                    Username override
+                    <input type="text" name="username" placeholder="Use Global / Random">
+                </label>
+
+                <label>
+                    Cloud Server override
+                    <input type="text" name="cloudServer" placeholder="Use Global (or 'local')">
+                </label>
+
+                <label>
+                    Resize Mode
+                    <select name="resizeMode">
+                        <option value="preserve-ratio">Preserve Ratio</option>
+                        <option value="stretch">Stretch</option>
+                        <option value="zoom">Zoom</option>
+                    </select>
+                </label>
+
+                <label>
+                    Accent Color
+                    <input type="color" name="accentColor">
+                </label>
+
+                <label>
+                    Editable Lists
+                    <input type="checkbox" name="editableLists">
+                </label>
+
+                <label>
+                    Gamepad support
+                    <input type="checkbox" name="gamepad">
+                </label>
+
+                <label>
+                    Pointer Lock
+                    <input type="checkbox" name="pointerlock">
+                </label>
+
+                <label>
+                    Special Cloud Behaviors
+                    <input type="checkbox" name="specialCloudBehaviors">
+                </label>
+
+                <label>
+                    Unsafe Cloud Behaviors
+                    <input type="checkbox" name="unsafeCloudBehaviors">
+                </label>
+
+                <label>
+                    Enable Pause
+                    <input type="checkbox" name="pause">
+                </label>
+            </div>
+
+            <div class="modal-actions">
+                <button id="save-settings" type="submit">Save</button>
+                <button id="close-settings" type="button">Close</button>
+            </div>
+
+            <p id="settings-status"></p>
+        </form>
+    </div>
+</div>
+
+<div id="global-settings-modal" class="modal" hidden>
+    <div class="modal-card">
+        <h2>Global Settings</h2>
+
+        <form id="global-settings-form">
+            <div class="settings-grid">
+                <label style="grid-column: 1 / -1;">
+                    Global Username
+                    <input type="text" name="username" placeholder="Leave empty for random player####" style="width: 250px;">
+                </label>
+
+                <label style="grid-column: 1 / -1;">
+                    Global Cloud Server
+                    <input type="text" name="cloudServer" placeholder="wss://clouddata.turbowarp.org" style="width: 250px;">
+                </label>
+            </div>
+
+            <div class="modal-actions">
+                <button id="save-global-settings" type="submit">Save</button>
+                <button id="close-global-settings" type="button">Close</button>
+            </div>
+
+            <p id="global-settings-status"></p>
+        </form>
+    </div>
+</div>
 
 <script src="launcher.js"></script>
 

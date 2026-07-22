@@ -197,13 +197,46 @@
     };
     const interpolate = (a, b, t) => a + t * (b - a);
 
-    let gameMeta = { title: document.title, fileName: "project.sb3" };
+    const defaultRuntimeSettings = {
+      turboMode: false,
+      interpolation: false,
+      framerate: 30,
+      highQualityRender: false,
+      fencing: true,
+      miscLimits: false,
+      maxClones: 9999999999,
+      compilerEnabled: true,
+      warpTimer: false,
+      maxTextureDimension: 2048,
+      stageWidth: 480,
+      stageHeight: 360,
+      username: "",
+      cloudServer: "",
+      resizeMode: "preserve-ratio",
+      accentColor: "#ff4c4c",
+      editableLists: false,
+      gamepad: false,
+      pointerlock: false,
+      specialCloudBehaviors: false,
+      unsafeCloudBehaviors: false,
+      pause: false
+    };
+
+    let gameMeta = {
+      title: document.title,
+      fileName: "project.sb3",
+      runtimeSettings: {...defaultRuntimeSettings}
+    };
     try {
       const metaRequest = new XMLHttpRequest();
       metaRequest.open("GET", "./game-meta.json", false);
       metaRequest.send();
       if (metaRequest.status === 200) {
         gameMeta = JSON.parse(metaRequest.responseText);
+        gameMeta.runtimeSettings = {
+          ...defaultRuntimeSettings,
+          ...(gameMeta.runtimeSettings || {})
+        };
         document.title = gameMeta.title;
       }
     } catch (error) {
@@ -214,10 +247,10 @@
       setProgress(0.1);
 
       const scaffolding = new Scaffolding.Scaffolding();
-      scaffolding.width = 480;
-      scaffolding.height = 360;
-      scaffolding.resizeMode = "preserve-ratio";
-      scaffolding.editableLists = false;
+      scaffolding.width = gameMeta.runtimeSettings.stageWidth;
+      scaffolding.height = gameMeta.runtimeSettings.stageHeight;
+      scaffolding.resizeMode = gameMeta.runtimeSettings.resizeMode || "preserve-ratio";
+      scaffolding.editableLists = !!gameMeta.runtimeSettings.editableLists;
       scaffolding.usePackagedRuntime = true;
       scaffolding.setup();
       scaffolding.appendTo(appElement);
@@ -233,11 +266,23 @@
         videoProvider: vm.runtime.ioDevices.video.provider
       };
 
-      scaffolding.setUsername("player####".replace(/#/g, () => Math.floor(Math.random() * 10)));
-      scaffolding.setAccentColor("#ff4c4c");
+      if (gameMeta.runtimeSettings.username) {
+        scaffolding.setUsername(gameMeta.runtimeSettings.username);
+      } else {
+        scaffolding.setUsername("player####".replace(/#/g, () => Math.floor(Math.random() * 10)));
+      }
+      scaffolding.setAccentColor(gameMeta.runtimeSettings.accentColor || "#ff4c4c");
 
       try {
-        scaffolding.addCloudProvider(new Scaffolding.Cloud.LocalStorageProvider("cloudvariables:p4-@" + gameMeta.fileName));
+        const cloudServer = gameMeta.runtimeSettings.cloudServer;
+        if (cloudServer && cloudServer !== "local" && cloudServer !== "none") {
+          scaffolding.addCloudProvider(new Scaffolding.Cloud.WebSocketProvider(
+            cloudServer,
+            gameMeta.projectId || gameMeta.fileName
+          ));
+        } else {
+          scaffolding.addCloudProvider(new Scaffolding.Cloud.LocalStorageProvider("cloudvariables:p4-@" + gameMeta.fileName));
+        }
       } catch (error) {
         console.error(error);
       }
@@ -288,26 +333,32 @@
         }
       }
 
-      vm.setTurboMode(false);
-      if (vm.setInterpolation) vm.setInterpolation(false);
-      if (vm.setFramerate) vm.setFramerate(30);
-      if (vm.renderer.setUseHighQualityRender) vm.renderer.setUseHighQualityRender(false);
+      vm.setTurboMode(!!gameMeta.runtimeSettings.turboMode);
+      if (vm.setInterpolation) vm.setInterpolation(!!gameMeta.runtimeSettings.interpolation);
+      if (vm.setFramerate) vm.setFramerate(gameMeta.runtimeSettings.framerate);
+      if (vm.renderer.setUseHighQualityRender) vm.renderer.setUseHighQualityRender(!!gameMeta.runtimeSettings.highQualityRender);
       if (vm.setRuntimeOptions) vm.setRuntimeOptions({
-        fencing: true,
-        miscLimits: false,
-        maxClones: 9999999999,
+        fencing: !!gameMeta.runtimeSettings.fencing,
+        miscLimits: !!gameMeta.runtimeSettings.miscLimits,
+        maxClones: gameMeta.runtimeSettings.maxClones,
       });
       if (vm.setCompilerOptions) vm.setCompilerOptions({
-        enabled: true,
-        warpTimer: false
+        enabled: !!gameMeta.runtimeSettings.compilerEnabled,
+        warpTimer: !!gameMeta.runtimeSettings.warpTimer
       });
-      if (vm.renderer.setMaxTextureDimension) vm.renderer.setMaxTextureDimension(2048);
+      if (vm.renderer.setMaxTextureDimension) vm.renderer.setMaxTextureDimension(gameMeta.runtimeSettings.maxTextureDimension);
 
       // enforcePrivacy threat model only makes sense in the editor
       if (vm.runtime.setEnforcePrivacy) vm.runtime.setEnforcePrivacy(false);
 
       if (typeof ScaffoldingAddons !== 'undefined') {
-        ScaffoldingAddons.run(scaffolding, {"gamepad":false,"pointerlock":false,"specialCloudBehaviors":false,"unsafeCloudBehaviors":false,"pause":false});
+        ScaffoldingAddons.run(scaffolding, {
+          "gamepad": !!gameMeta.runtimeSettings.gamepad,
+          "pointerlock": !!gameMeta.runtimeSettings.pointerlock,
+          "specialCloudBehaviors": !!gameMeta.runtimeSettings.specialCloudBehaviors,
+          "unsafeCloudBehaviors": !!gameMeta.runtimeSettings.unsafeCloudBehaviors,
+          "pause": !!gameMeta.runtimeSettings.pause
+        });
       }
 
       scaffolding.setExtensionSecurityManager({
